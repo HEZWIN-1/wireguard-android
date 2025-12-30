@@ -1,59 +1,56 @@
-name: Build WireGuard (Release Version)
+
+name: Android Build
 
 on:
-  workflow_dispatch:
   push:
     branches:
-      - master
+      - main
+  pull_request:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-        fetch-depth: 0
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
 
-    - name: Setup Java
-      uses: actions/setup-java@v4
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK
+      uses: actions/setup-java@v3
       with:
         distribution: temurin
         java-version: 17
 
-    - name: Setup Go
-      uses: actions/setup-go@v5
+    - name: Download Android SDK
+      uses: android-actions/setup-android@v2
       with:
-        go-version: '1.21'
-        cache: false
+        api-level: 33
+        build-tools: 33.0.2
+        cmake: 3.22.1
 
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
+    - name: Accept Licenses
+      run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
 
-    - name: Install NDK
+    - name: Setup local.properties
+      run: echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+    - name: Decode Release Keystore
+      if: ${{ secrets.RELEASE_KEY_B64 }}
       run: |
-        yes | sdkmanager "ndk;27.0.12077973"
-        echo "NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> $GITHUB_ENV
+        mkdir -p ui/ui
+        echo "${{ secrets.RELEASE_KEY_B64 }}" | base64 --decode > ui/ui/my-release-key.jks
 
-    - name: Decode Keystore
-      run: |
-        mkdir -p ui
-        echo "${{ secrets.RELEASE_KEY_B64 }}" | base64 --decode > ui/my-release-key.jks
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
     - name: Build Release APK
-      run: |
-        echo "sdk.dir=$ANDROID_HOME" > local.properties
-        chmod +x gradlew
-        ./gradlew assembleRelease \
-          -Pandroid.injected.signing.store.file=ui/my-release-key.jks \
-          -Pandroid.injected.signing.store.password=${{ secrets.RELEASE_KEY_PASSWORD }} \
-          -Pandroid.injected.signing.key.alias=${{ secrets.RELEASE_KEY_ALIAS }} \
-          -Pandroid.injected.signing.key.password=${{ secrets.RELEASE_KEY_ALIAS_PASSWORD }}
+      run: ./gradlew clean assembleRelease --stacktrace --warning-mode all
 
     - name: Upload Release APK
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: WireGuard-Release-APK
-        path: ui/build/outputs/apk/release/*.apk
+        path: app/build/outputs/apk/release/app-release.apk
