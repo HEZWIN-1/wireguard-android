@@ -1,4 +1,4 @@
-name: Build WireGuard (Release & Debug)
+name: Build WireGuard (Release Version)
 
 on:
   workflow_dispatch:
@@ -41,18 +41,6 @@ jobs:
       run: |
         mkdir -p ui
         echo "${{ secrets.RELEASE_KEY_B64 }}" | base64 --decode > ui/my-release-key.jks
-
-    - name: Build Debug APK
-      run: |
-        echo "sdk.dir=$ANDROID_HOME" > local.properties
-        chmod +x gradlew
-        ./gradlew assembleDebug
-
-    - name: Upload Debug APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: WireGuard-Debug-APK
-        path: ui/build/outputs/apk/debug/*.apk
 
     - name: Build Release APK
       run: |
