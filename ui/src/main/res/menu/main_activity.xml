@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- Ayarlar -->
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_settings_blue"  <!-- Gözü yormayan mavi ikon -->
+        android:title="@string/settings"
+        android:contentDescription="@string/settings"
+        app:showAsAction="always" />
+
+    <!-- Yardım -->
+    <item
+        android:id="@+id/menu_help"
+        android:icon="@drawable/ic_help_blue"
+        android:title="@string/help"
+        android:contentDescription="@string/help"
+        app:showAsAction="ifRoom" />
+
+    <!-- Hakkında / About -->
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@drawable/ic_info_blue"
+        android:title="@string/about"
+        android:contentDescription="@string/about"
+        app:showAsAction="never" />
+</menu>

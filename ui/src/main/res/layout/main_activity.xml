@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_activity_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="?attr/colorBackground"
+    tools:context=".activity.MainActivity">
+
+    <!-- Toolbar veya AppBar eklemek istersen buraya koyabilirsin -->
+    <!-- Örnek: -->
+    <!--
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/topAppBar"
+        style="@style/Widget.Material3.TopAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:titleTextColor="?attr/colorOnPrimary"
+        app:title="WireGuard"
+        app:navigationIcon="@drawable/ic_menu" />
+    -->
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/list_detail_container"
+        android:name="com.wireguard.android.fragment.TunnelListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:tag="LIST"
+        android:background="?attr/colorSurface"
+        android:paddingStart="@dimen/normal_margin"
+        android:paddingEnd="@dimen/normal_margin"
+        android:clipToPadding="false"
+        tools:layout="@layout/fragment_tunnel_list" />
+
+    <!-- Alt sağdaki + butonunu eklemek istersen FloatingActionButton -->
+    <!--
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_tunnel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/normal_margin"
+        android:contentDescription="@string/add_tunnel"
+        android:src="@drawable/ic_add"
+        android:tint="?attr/colorOnPrimary"
+        app:backgroundTint="?attr/colorPrimary"
+        app:layout_anchor="@id/list_detail_container"
+        app:layout_anchorGravity="bottom|end" />
+    -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
