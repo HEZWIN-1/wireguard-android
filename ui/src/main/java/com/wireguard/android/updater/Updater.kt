@@ -1,3 +1,4 @@
+
 /*
  * Copyright © 2017-2025 WireGuard LLC. All Rights Reserved.
  * SPDX-License-Identifier: Apache-2.0
@@ -21,7 +22,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import java.io.File
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
@@ -56,7 +56,7 @@ object Updater {
             mutableState.emit(progress)
     }
 
-    private class Version(version: String) : Comparable<Version> {
+    class Version(version: String) : Comparable<Version> {
         val parts: ULongArray
         init {
             val strParts = version.split(".")
@@ -74,7 +74,7 @@ object Updater {
         }
     }
 
- fun installer(context: Context): String = try {
+    fun installer(context: Context): String = try {
         val pm = context.packageManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             pm.getInstallSourceInfo(context.packageName).installingPackageName ?: ""
@@ -83,7 +83,7 @@ object Updater {
             pm.getInstallerPackageName(context.packageName) ?: ""
     } catch (_: Throwable) { "" }
 
-     fun installerIsGooglePlay(context: Context) = installer(context) == "com.android.vending"
+    fun installerIsGooglePlay(context: Context) = installer(context) == "com.android.vending"
 
     private suspend fun fetchRemoteVersion(): Version? {
         return try {
@@ -93,7 +93,7 @@ object Updater {
             connection.readTimeout = 5000
             connection.connect()
             if (connection.responseCode != HttpURLConnection.HTTP_OK) return null
-            val versionStr = connection.inputStream.bufferedReader().use { it.readText().trim() }
+            val versionStr = connection.inputStream.bufferedReader().use { it.readText().trim().replace("\"","") }
             Version(versionStr)
         } catch (_: Exception) { null }
     }
