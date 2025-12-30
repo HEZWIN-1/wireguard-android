@@ -74,7 +74,7 @@ object Updater {
         }
     }
 
-    private fun installer(context: Context): String = try {
+ fun installer(context: Context): String = try {
         val pm = context.packageManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             pm.getInstallSourceInfo(context.packageName).installingPackageName ?: ""
@@ -83,7 +83,7 @@ object Updater {
             pm.getInstallerPackageName(context.packageName) ?: ""
     } catch (_: Throwable) { "" }
 
-    private fun installerIsGooglePlay(context: Context) = installer(context) == "com.android.vending"
+     fun installerIsGooglePlay(context: Context) = installer(context) == "com.android.vending"
 
     private suspend fun fetchRemoteVersion(): Version? {
         return try {
