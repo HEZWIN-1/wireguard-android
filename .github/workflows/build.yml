@@ -1,4 +1,3 @@
-
 name: Build WireGuard (Release Version)
 
 on:
@@ -37,13 +36,6 @@ jobs:
       run: |
         yes | sdkmanager "ndk;27.0.12077973"
         echo "NDK_HOME=$ANDROID_HOME/ndk/27.0.12077973" >> $GITHUB_ENV
-
-    - name: Check secrets
-      run: |
-        echo "RELEASE_KEY_B64 length: $(echo "${{ secrets.RELEASE_KEY_B64 }}" | wc -c)"
-        echo "RELEASE_KEY_PASSWORD set: ${!RELEASE_KEY_PASSWORD:+yes}"
-        echo "RELEASE_KEY_ALIAS set: ${!RELEASE_KEY_ALIAS:+yes}"
-        echo "RELEASE_KEY_ALIAS_PASSWORD set: ${!RELEASE_KEY_ALIAS_PASSWORD:+yes}"
 
     - name: Decode Keystore
       run: |
