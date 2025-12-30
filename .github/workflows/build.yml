@@ -1,4 +1,4 @@
-name: Build WireGuard (Release Version)
+name: Build WireGuard (Release & Debug)
 
 on:
   workflow_dispatch:
@@ -39,14 +39,27 @@ jobs:
 
     - name: Decode Keystore
       run: |
-        echo "${{ secrets.RELEASE_KEY_B64 }}" | base64 --decode > my-release-key.jks
+        mkdir -p ui
+        echo "${{ secrets.RELEASE_KEY_B64 }}" | base64 --decode > ui/my-release-key.jks
+
+    - name: Build Debug APK
+      run: |
+        echo "sdk.dir=$ANDROID_HOME" > local.properties
+        chmod +x gradlew
+        ./gradlew assembleDebug
+
+    - name: Upload Debug APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: WireGuard-Debug-APK
+        path: ui/build/outputs/apk/debug/*.apk
 
     - name: Build Release APK
       run: |
         echo "sdk.dir=$ANDROID_HOME" > local.properties
         chmod +x gradlew
         ./gradlew assembleRelease \
-          -Pandroid.injected.signing.store.file=my-release-key.jks \
+          -Pandroid.injected.signing.store.file=ui/my-release-key.jks \
           -Pandroid.injected.signing.store.password=${{ secrets.RELEASE_KEY_PASSWORD }} \
           -Pandroid.injected.signing.key.alias=${{ secrets.RELEASE_KEY_ALIAS }} \
           -Pandroid.injected.signing.key.password=${{ secrets.RELEASE_KEY_ALIAS_PASSWORD }}
